@@ -6,12 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI play - Setup</title>
     <link rel="stylesheet" href="design.css">
-    <script src="main.js"></script>
+    
 </head>
-<body onload="debug()">
+<body onload="onLaunch()">
+    
     <h1>Game Settings</h1>
     <p>Player Count</p>
-    <input type="range" min="1" max="4" value="4" class="slider" id="playerCount">
-    <p id="sliderAmount">4</p>
+    <input type="range" min="2" max="4" class="slider" id="playerCount" oninput="updateSlider(this.value)">
+    <p id="sliderAmount">4 players</p>
+    <script src="main.js"></script>
 </body>
 </html>
