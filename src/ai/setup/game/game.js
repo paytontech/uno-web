@@ -9,17 +9,17 @@ var availableCards = {
 var playerCards = []
 
 function startGame() {
-    for (i > 7; i= 0; i++) {
+    console.log("Starting game...")
+    for (var i = 0; i < 7; i++) {
+        console.log("for loop")
         var cardColorIndex = Math.random(0, 5)
         var cardColor = availableCards[cardColorIndex]
         console.log(cardColor)
         if (cardColor != "wild") {
             var cardIndex = Math.random(0, 11)
-            playerCards.push(cardColor[cardIndex])
         }
         if (cardColor == "wild") {
             var cardIndex = Math.random(0, 1)
-            playerCards.push(cardColor[cardIndex])
         }
         console.log(playerCards)
         document.getElementById("debugTest").innerHTML = playerCards
