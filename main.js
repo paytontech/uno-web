@@ -43,26 +43,70 @@ function genCards() {
 var gameData = {
     players: [],
     stack: {
-        current: {/*card object*/},
+        current: {
+            color: "green",
+            number: 0
+        },
         prev: [
             {/*card object*/}
         ]
-    }
+        },
+    currentPlayer: 0,
+    reversed: false
 }
 
 function playCard(playerId, cardIndex) {
-    var card = gameData.players[0].cards[cardIndex]
+    var card = gameData.players[playerId].cards[cardIndex]
     if (gameData.stack.current.color == card.color || gameData.stack.current.number == card.number) {
         //play card
-        console.log(`playing card: ${card}`)
+        gameData.stack.prev.push(gameData.stack.current)
+        gameData.stack.current = card
+        gameData.players[playerId].cards.splice(cardIndex, 1)
+        removeCards()
+        if (!gameData.reversed) {
+            gameData.currentPlayer+=1
+        } else {
+            gameData.currentPlayer-=1
+        }
     } else {
-        console.log(`invalid card: ${card}`)
+
     }
 }
 
-
-
-
+function drawCards() {
+    
+    for (let i = 0; i < gameData.players[0].cards.length; i++) {
+        var button = document.createElement('button')
+        button.className = 'card'
+        button.id = i
+        button.innerHTML = `<p>${gameData.players[0].cards[i].color}<br>${gameData.players[0].cards[i].number}</p>`
+        document.body.append(button)
+        
+    } 
+    for (let z = 0; z < gameData.players[0].cards.length;z++) {
+        let button = document.getElementById(z)
+        button.addEventListener('click', () => {
+            playCard(0, z)
+        })
+    }
+    var currentCardText = document.createElement("button")
+    currentCardText.className = 'current'
+    currentCardText.id = 'current'
+    currentCardText.innerHTML = `<p>${gameData.stack.current.color}<br>${gameData.stack.current.number}`
+    currentCardText.disabled = true
+    document.body.append(currentCardText)
+}
+function removeCards() {
+   
+    const cardsDOM = document.querySelectorAll(".card")
+    document.getElementById('current').remove()
+    cardsDOM.forEach(card => {
+        card.remove()
+    })
+    setTimeout(() => {
+        drawCards()
+    }, 0)
+}
 
 function distCards(playerCount) {
     for (let i = 0; i < playerCount; i++) {
@@ -104,18 +148,8 @@ function distCards(playerCount) {
         console.log(gameData.players)
     
     }
-    for (i = 0; i < gameData.players[0].cards.length; i++) {
-        var button = document.createElement('button')
-        button.className = 'card'
-        button.id = i
-        button.innerHTML = `<p>${gameData.players[0].cards[i].color}<br>${gameData.players[0].cards[i].number}</p>`
-        document.body.append(button)
-        
-    } 
-    for (let i = 0; i < gameData.players[0].cards.length;i++) {
-        let button = document.getElementById(i)
-        button.addEventListener('click', () => {
-            playCard(0, i)
-        })
-    }
+    
+    drawCards()
 }
+
+
