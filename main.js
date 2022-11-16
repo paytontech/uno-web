@@ -44,7 +44,7 @@ var gameData = {
     players: [],
     stack: {
         current: {
-            color: "green",
+            color: "",
             number: 0
         },
         prev: [
@@ -62,18 +62,21 @@ function playCard(playerId, cardIndex) {
         gameData.stack.prev.push(gameData.stack.current)
         gameData.stack.current = card
         gameData.players[playerId].cards.splice(cardIndex, 1)
-        removeCards()
+        drawCards()
         if (!gameData.reversed) {
             gameData.currentPlayer+=1
         } else {
             gameData.currentPlayer-=1
         }
     } else {
-
+        document.getElementById('error').className = 'visible'
+        setTimeout(() => {
+            document.getElementById('error').className = 'hidden'
+        }, 3000)
     }
 }
 
-function drawCards() {
+function renderCards() {
     
     for (let i = 0; i < gameData.players[0].cards.length; i++) {
         var button = document.createElement('button')
@@ -95,20 +98,47 @@ function drawCards() {
     currentCardText.innerHTML = `<p>${gameData.stack.current.color}<br>${gameData.stack.current.number}`
     currentCardText.disabled = true
     document.body.append(currentCardText)
+    var cardCountText= document.createElement('p')
+    cardCountText.innerHTML = `${gameData.players[0].cards.length} card(s)`
+    cardCountText.id = 'cardCount'
+    document.body.append(cardCountText)
 }
-function removeCards() {
+function drawCards() {
    
     const cardsDOM = document.querySelectorAll(".card")
-    document.getElementById('current').remove()
-    cardsDOM.forEach(card => {
-        card.remove()
-    })
-    setTimeout(() => {
-        drawCards()
-    }, 0)
+    if (cardsDOM != 0) {
+        if (document.getElementById('current')) {
+            document.getElementById('current').remove()
+            document.getElementById('cardCount').remove()
+        }
+        cardsDOM.forEach(card => {
+            card.remove()
+        })
+    }
+    renderCards()
 }
 
 function distCards(playerCount) {
+    var cardColorRand = Math.floor(Math.random() * 4)
+    var cardNumberRand = Math.floor(Math.random() * 10)
+    switch (cardColorRand) {
+        case 0:
+            gameData.stack.current.color = 'red'
+            gameData.stack.current.number = cardNumberRand
+            break
+        case 1:
+            gameData.stack.current.color = 'green'
+            gameData.stack.current.number = cardNumberRand
+            break
+        case 2:
+            gameData.stack.current.color = 'yellow'
+            gameData.stack.current.number = cardNumberRand
+            break
+        case 3:
+            gameData.stack.current.color = 'blue'
+            gameData.stack.current.number = cardNumberRand
+            break
+    }
     for (let i = 0; i < playerCount; i++) {
         //player is always index 0.
         if (gameData.players.length == 0) {
@@ -152,4 +182,25 @@ function distCards(playerCount) {
     drawCards()
 }
 
+function grabCard(playerId) {
+        var index1 = Math.floor(Math.random() * 4)
+            var cardType = Object.entries(cards)[index1]
+            var cardNum = Math.floor(Math.random() * 10)
+            switch (index1) {
+                case 0:
+                    gameData.players[playerId].cards.push(cards.red[cardNum])
+                    break
+                case 1:
+                    gameData.players[playerId].cards.push(cards.green[cardNum])
+                    break
+                case 2:
+                    gameData.players[playerId].cards.push(cards.blue[cardNum])
+                    break
+                case 3:
+                    gameData.players[playerId].cards.push(cards.yellow[cardNum])
+                    break
+                
+            }
+            drawCards()
+}
 

@@ -4,3 +4,11 @@
     border-style: solid;
     color: red;
 }
+#error {
+    color: red;
+    font-weight: bold;
+}
+
+.hidden {
+    opacity: 0;
+}
