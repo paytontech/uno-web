@@ -12,3 +12,13 @@
 .hidden {
     opacity: 0;
 }
+.win {
+    color: rgb(22, 174, 108);
+}
+.lose {
+    color: crimson;
+}
+#logs {
+    border-style: solid;
+    border-color: darkslategray;
+}
