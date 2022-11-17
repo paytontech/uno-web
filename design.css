@@ -22,3 +22,6 @@
     border-style: solid;
     border-color: darkslategray;
 }
+#currentPlayer {
+    font-weight: bold;
+}

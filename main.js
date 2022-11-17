@@ -91,19 +91,27 @@ function botCheckPlay() {
 
 function checkGame(playerId) {
         if (!gameData.winner.gameOver) {
+            //if the player has no cards:
             if (gameData.players[playerId].cards.length == 0) {
+                //set gameOver true (ends the game)
                 gameData.winner.gameOver = true
+                //if the playerId is greater than 0 (0 is the ID of the player)
                 if (playerId > 0) {
+                    //indicate that a bot won, and which bot won
                     gameData.winner.bot = true
                     gameData.winner.id = playerId
                 } else {
+                    //indicate that the player won
                     gameData.winner.bot = false
                     gameData.winner.id = 0
                 }
+                //not at all sure why this is here
                 drawCards()
             }
+            //if the game is NOT reversed (reverse card coming later)
             if (!gameData.reversed) {
                 //not reversed
+                //move to the next player
                 if (gameData.currentPlayer == (gameData.players.length - 1)) {
                     gameData.currentPlayer = 0
                 } else {
@@ -111,6 +119,7 @@ function checkGame(playerId) {
                 }
             } else {
                 //reversed
+                //move to the next player
                 if (gameData.currentPlayer == 0) {
                     gameData.currentPlayer = gameData.players.length - 1
                 } else {
@@ -121,19 +130,28 @@ function checkGame(playerId) {
 }
 
 
-
+//arguably the most important function in the entire file (actually no nvm the renderCards() one is)
 function playCard(playerId, cardIndex) {
     var card = gameData.players[playerId].cards[cardIndex]
+    //if statement checks if the card is valid, and if the person trying to play the card is able to
     if ((gameData.stack.current.color == card.color || gameData.stack.current.number == card.number) && gameData.currentPlayer == playerId) {
         //play card
+        //dont know why this prev data exists, but it may be useful in the future so it stays
         gameData.stack.prev.push(gameData.stack.current)
+        //set the current card to the card played
         gameData.stack.current = card
+        //remove the card from player's data
         gameData.players[playerId].cards.splice(cardIndex, 1)
+        //do various stuff
         checkGame(playerId)
+        //render cards
         drawCards()
+        //debugging
         console.log(`currentPlayer: ${gameData.currentPlayer}`)
+        //check if it's a bot's turn
         botCheckPlay()
     } else {
+        //show an error
         document.getElementById('error').className = 'visible'
         setTimeout(() => {
             document.getElementById('error').className = 'hidden'
@@ -141,9 +159,31 @@ function playCard(playerId, cardIndex) {
     }
 }
 
+//--------------------------
+//|WARNING:                |
+//|THE FOLLOWING RENDER    |
+//|SYSTEM MAY JUST BE THE  |
+//|MOST JANKY, MESSY, AND  |
+//|JUST BAD CODE YOU'VE    |
+//|EVER SEEN. I AM NOT     |
+//|RESPONSIBLE FOR ANY     |
+//|MEDICAL PROBLEMS        |
+//|(anuerism, stroke,      |
+//|cardiac arrest) THAT    |
+//|MAY ARISE FROM          |
+//|ATTEMPTING TO READ      |
+//|THIS CODE. I HOPE TO    |
+//|EVENTUALLY REPLACE THIS |
+//|WITH A NORMAL/SANE      |
+//|SOLUTION, BUT THAT IS   |
+//|JUST NOT VERY HIGH ON   |
+//|MY PRIORITIES.          |
+//--------------------------
+
 function renderCards() {
-    
+    //for every card a player has:
     for (let i = 0; i < gameData.players[0].cards.length; i++) {
+        //create a button which has the ID of the index of that card, and display it 
         var button = document.createElement('button')
         button.className = 'card'
         button.id = i
@@ -152,11 +192,13 @@ function renderCards() {
         
     } 
     for (let z = 0; z < gameData.players[0].cards.length;z++) {
+        //add an event listener to every card button to play said card
         let button = document.getElementById(z)
         button.addEventListener('click', () => {
             playCard(0, z)
         })
     }
+    //uhhhhhhh
     var currentCardText = document.createElement("button")
     currentCardText.className = 'current'
     currentCardText.id = 'current'
@@ -178,9 +220,16 @@ function renderCards() {
         currentPlayerText.id = 'currentPlayer'
         document.body.append(currentPlayerText)
     }
+    for (let i = 1; i < gameData.players.length;i++) {
+        let cardCountBot = document.createElement('p')
+        cardCountBot.className = 'cardCountBot'
+        cardCountBot.innerHTML = `Bot ${i} has ${gameData.players[i].cards.length} card(s)`
+        document.body.append(cardCountBot)
+    }
     
 }
 function drawCards() {
+    //idk why this exists when renderCards() exists but im scared that if I change any of this it'll break so it stays
    if (!gameData.winner.gameOver) {
     const cardsDOM = document.querySelectorAll(".card")
     if (cardsDOM != 0) {
@@ -188,6 +237,9 @@ function drawCards() {
             document.getElementById('current').remove()
             document.getElementById('cardCount').remove()
             document.getElementById('currentPlayer').remove()
+            document.querySelectorAll('.cardCountBot').forEach(e => {
+                e.remove()
+            })
         }
         cardsDOM.forEach(card => {
             card.remove()
@@ -200,6 +252,7 @@ function drawCards() {
         e.remove()
     })
     var winnerText = document.createElement('h1')
+    
     if (gameData.winner.bot == true) {
         winnerText.innerHTML = `You lose! Bot ${gameData.winner.id} wins!`
         winnerText.className = 'lose'
@@ -208,14 +261,31 @@ function drawCards() {
         winnerText.className = 'win'
     }
     document.body.append(winnerText)
+    var replayButton = document.createElement('button')
+   replayButton.innerHTML = 'Replay'
+   replayButton.onclick = () => {
+       window.location.reload()
    }
-    
+   document.body.append(replayButton)
+   }
+   
 }
 
+
+//--------------------------
+//|Personal Injury risk    |
+//|over.                   |
+//--------------------------
+
+
 function distCards(playerCount) {
+    //if cards have not been given out yet:
     if (!gameData.finishedDealing) {
+        //generate two random variables: a random number to determine color of card
         var cardColorRand = Math.floor(Math.random() * 4)
+        //and another random number to determine the number of the card
         var cardNumberRand = Math.floor(Math.random() * 10)
+        //boring programming stuff
         switch (cardColorRand) {
             case 0:
                 gameData.stack.current.color = 'red'
@@ -249,6 +319,7 @@ function distCards(playerCount) {
                     id: i
                 })
             }
+            //pretty much the same thing as above, but rather than the card chosen being put as the first card in the stack, 7 cards are given to each player
             for (let z = 0; z < 7; z++) {
                 var index1 = Math.floor(Math.random() * 4)
                 var cardType = Object.entries(cards)[index1]
@@ -273,7 +344,7 @@ function distCards(playerCount) {
             console.log(gameData.players)
         
         }
-        
+        //tell the game to start, and render the cards
         drawCards()
         gameData.finishedDealing = true
     }
@@ -281,7 +352,8 @@ function distCards(playerCount) {
 }
 
 function grabCard(playerId) {
-    if(gameData.finishedDealing) {
+    if(gameData.finishedDealing && gameData.currentPlayer == playerId) {
+        //same random card gen thing that's been used so many times so far
         var index1 = Math.floor(Math.random() * 4)
         var cardType = Object.entries(cards)[index1]
         var cardNum = Math.floor(Math.random() * 10)
