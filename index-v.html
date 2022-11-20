@@ -5,14 +5,18 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>uno-vue</title>
-    <script type="module" src="vue-remake.js" defer></script>
+    
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
 </head>
 <body>
     <div id="app">
-        <button id="important" onclick="distCards(4)">distribute cards</button>
-        <button id="important" onclick="grabCard(0)">pull card</button>
-        <p>{{ message }}</p>
-        <button @click="test()">test</button>
+        <button @click="distCards(4)">distribute cards</button>
+        <button @click="grabCard(0)">pull card</button>
+        <li v-for="(card) in gameData.players[0].cards">
+            <p>{{card}}</p>
+        </li>
     </div>
+    <script type="module" src="vue-remake.js"></script>
 </body>
 </html>
