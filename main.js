@@ -106,7 +106,6 @@ function checkGame(playerId) {
                     gameData.winner.id = 0
                 }
                 //not at all sure why this is here
-                drawCards()
             }
             //if the game is NOT reversed (reverse card coming later)
             if (!gameData.reversed) {
@@ -145,7 +144,6 @@ function playCard(playerId, cardIndex) {
         //do various stuff
         checkGame(playerId)
         //render cards
-        drawCards()
         //debugging
         console.log(`currentPlayer: ${gameData.currentPlayer}`)
         //check if it's a bot's turn
@@ -159,123 +157,7 @@ function playCard(playerId, cardIndex) {
     }
 }
 
-//--------------------------
-//|WARNING:                |
-//|THE FOLLOWING RENDER    |
-//|SYSTEM MAY JUST BE THE  |
-//|MOST JANKY, MESSY, AND  |
-//|JUST BAD CODE YOU'VE    |
-//|EVER SEEN. I AM NOT     |
-//|RESPONSIBLE FOR ANY     |
-//|MEDICAL PROBLEMS        |
-//|(anuerism, stroke,      |
-//|cardiac arrest) THAT    |
-//|MAY ARISE FROM          |
-//|ATTEMPTING TO READ      |
-//|THIS CODE. I HOPE TO    |
-//|EVENTUALLY REPLACE THIS |
-//|WITH A NORMAL/SANE      |
-//|SOLUTION, BUT THAT IS   |
-//|JUST NOT VERY HIGH ON   |
-//|MY PRIORITIES.          |
-//--------------------------
 
-function renderCards() {
-    //for every card a player has:
-    for (let i = 0; i < gameData.players[0].cards.length; i++) {
-        //create a button which has the ID of the index of that card, and display it 
-        var button = document.createElement('button')
-        button.className = 'card'
-        button.id = i
-        button.innerHTML = `<p>${gameData.players[0].cards[i].color}<br>${gameData.players[0].cards[i].number}</p>`
-        document.body.append(button)
-        
-    } 
-    for (let z = 0; z < gameData.players[0].cards.length;z++) {
-        //add an event listener to every card button to play said card
-        let button = document.getElementById(z)
-        button.addEventListener('click', () => {
-            playCard(0, z)
-        })
-    }
-    //uhhhhhhh
-    var currentCardText = document.createElement("button")
-    currentCardText.className = 'current'
-    currentCardText.id = 'current'
-    currentCardText.innerHTML = `<p>${gameData.stack.current.color}<br>${gameData.stack.current.number}`
-    currentCardText.disabled = true
-    document.body.append(currentCardText)
-    var cardCountText= document.createElement('p')
-    cardCountText.innerHTML = `${gameData.players[0].cards.length} card(s)`
-    cardCountText.id = 'cardCount'
-    document.body.append(cardCountText)
-    var currentPlayerText = document.createElement('p')
-    if (gameData.currentPlayer == 0) {
-        
-        currentPlayerText.innerHTML = `Your turn!`
-        currentPlayerText.id = 'currentPlayer'
-        document.body.append(currentPlayerText)
-    } else {
-        currentPlayerText.innerHTML = `Bot ${gameData.currentPlayer}'s Turn!`
-        currentPlayerText.id = 'currentPlayer'
-        document.body.append(currentPlayerText)
-    }
-    for (let i = 1; i < gameData.players.length;i++) {
-        let cardCountBot = document.createElement('p')
-        cardCountBot.className = 'cardCountBot'
-        cardCountBot.innerHTML = `Bot ${i} has ${gameData.players[i].cards.length} card(s)`
-        document.body.append(cardCountBot)
-    }
-    
-}
-function drawCards() {
-    //idk why this exists when renderCards() exists but im scared that if I change any of this it'll break so it stays
-   if (!gameData.winner.gameOver) {
-    const cardsDOM = document.querySelectorAll(".card")
-    if (cardsDOM != 0) {
-        if (document.getElementById('current')) {
-            document.getElementById('current').remove()
-            document.getElementById('cardCount').remove()
-            document.getElementById('currentPlayer').remove()
-            document.querySelectorAll('.cardCountBot').forEach(e => {
-                e.remove()
-            })
-        }
-        cardsDOM.forEach(card => {
-            card.remove()
-        })
-    }
-    renderCards()
-   } else {
-    //game over
-    document.querySelectorAll("body *").forEach((e) => {
-        e.remove()
-    })
-    var winnerText = document.createElement('h1')
-    
-    if (gameData.winner.bot == true) {
-        winnerText.innerHTML = `You lose! Bot ${gameData.winner.id} wins!`
-        winnerText.className = 'lose'
-    } else {
-        winnerText.innerHTML = `You win!`
-        winnerText.className = 'win'
-    }
-    document.body.append(winnerText)
-    var replayButton = document.createElement('button')
-   replayButton.innerHTML = 'Replay'
-   replayButton.onclick = () => {
-       window.location.reload()
-   }
-   document.body.append(replayButton)
-   }
-   
-}
-
-
-//--------------------------
-//|Personal Injury risk    |
-//|over.                   |
-//--------------------------
 
 
 function distCards(playerCount) {
@@ -345,7 +227,6 @@ function distCards(playerCount) {
         
         }
         //tell the game to start, and render the cards
-        drawCards()
         gameData.finishedDealing = true
     }
     
@@ -374,7 +255,6 @@ function grabCard(playerId) {
         }
         checkGame(playerId)
         botCheckPlay()
-        drawCards()
         
     }
         
